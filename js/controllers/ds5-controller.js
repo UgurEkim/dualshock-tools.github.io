@@ -32,7 +32,7 @@ const DS5_BUTTON_MAP = [
   { name: 'l3', byte: 8, mask: 0x40, svg: 'L3' },
   { name: 'r3', byte: 8, mask: 0x80, svg: 'R3' },
   { name: 'ps', byte: 9, mask: 0x01, svg: 'PS' },
-  { name: 'touchpad', byte: 9, mask: 0x02, svg: 'Trackpad' },
+  { name: 'trackpad', byte: 9, mask: 0x02, svg: 'Trackpad' },
   { name: 'mute', byte: 9, mask: 0x04, svg: 'Mute' },
 ];
 
