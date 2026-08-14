@@ -18,6 +18,7 @@ import {
 import { show_calibration_history_modal } from './modals/calibration-history-modal.js';
 import { FinetuneHistory } from './finetune-history.js';
 import * as theme from './theme.js'
+import { ds5_colors } from './controllers/ds5-colors.js';
 
 // Application State - manages app-wide state and UI
 const app = {
@@ -152,6 +153,7 @@ async function connect() {
   app.gj = crypto.randomUUID();
   initAnalyticsApi(app); // init with gu and jg
 
+
   // Initialize controller manager with translation function
   controller = initControllerManager({ handleNvStatusUpdate });
   controller.setInputHandler(handleControllerInput);
@@ -243,6 +245,8 @@ async function continue_connection({data, device}) {
 
       info = await controllerInstance.getInfo();
 
+      Storage.setString('controller-color', info.infoItems['Color']);
+
       // Initialize output state for DS5 controllers
       if (controllerInstance.initializeCurrentOutputState) {
         await controllerInstance.initializeCurrentOutputState();
@@ -315,7 +319,7 @@ async function continue_connection({data, device}) {
 
     Storage.lastConnectedController.set(lastConnectedInfo);
     updateLastConnectedInfo();
-
+    
     // Initialize SVG controller based on model
     await init_svg_controller(model);
 
@@ -512,12 +516,18 @@ function welcome_accepted() {
 async function init_svg_controller(model) {
   const svgContainer = document.getElementById('controller-svg-placeholder');
   const colorMode = Storage.preferredTheme.get();
+  const { infoItems } = await controller.getDeviceInfo();
+  const controller_color = infoItems?.find(item => item.key === l("Color"));
+  const color = controller_color && ds5_colors[controller_color.value]
+      ? controller_color.value
+      : "White";
+
   // Determine which SVG to load based on controller model
   let svgFileName;
   if (model === 'DS4') {
     svgFileName = 'dualshock-controller.svg';
   } else if (model === 'DS5' || model === 'DS5_Edge') {
-    svgFileName = 'dualsense-controller.svg';
+    svgFileName = 'dualsense-controller-custom.svg';
   } else if (model === 'VR2') {
     // Disable SVG controller for VR2
     svgContainer.innerHTML = '';
@@ -545,22 +555,41 @@ async function init_svg_controller(model) {
   // Reset trackpad bounding box so it's recalculated for the new SVG
   trackpadBbox = undefined;
 
-  const infillColors = colorMode === 'dark' ? '#2b3035' : '#ffffff';
-
   const lightBlue = '#7ecbff';
   const midBlue = '#3399cc';
   
   const dualshock = document.getElementById('Controller');
   set_svg_group_color(dualshock, lightBlue);
 
-  ['Button_outlines', 'Button_outlines_behind', 'L3_outline', 'R3_outline', 'Trackpad_outline'].forEach(id => {
+  ['Button_outlines', 
+    'Button_outlines_behind', 
+    'L3_outline', 
+    'R3_outline', 
+    'Trackpad_outline', 
+    'Triangle_infill',
+    'Cross_infill',
+    'Circle_infill',
+    'Square_infill',
+    'Up_infill',
+    'Down_infill',
+    'Left_infill',
+    'Right_infill',
+    'Create_infill',
+    'Options_infill',
+    'R1_infill',
+    'L1_infill',
+    'R2_infill',
+    'L2_infill',
+    'L3_infill', 
+    'R3_infill',
+    'Ps_infill',
+    'Mute_infill',
+    'Left_handle_infill', 
+    'Right_handle_infill', 
+    'Center_handle_infill', 
+    'Trackpad_infill'].forEach(id => {
     const group = document.getElementById(id);
-    set_svg_group_color(group, midBlue);
-  });
-
-  ['Controller_infills', 'Button_infills', 'L3_infill', 'R3_infill', 'Trackpad_infill'].forEach(id => {
-    const group = document.getElementById(id);
-    set_svg_group_color(group, infillColors);
+    set_svg_group_color(group, ds5_colors[color][id]);
   });
 }
 
@@ -745,9 +774,15 @@ function update_battery_status({/* charge_level, cable_connected, is_charging, i
 function update_ds_button_svg(changes, BUTTON_MAP) {
   if (!changes || Object.keys(changes).length === 0) return;
 
-  const colorMode = Storage.preferredTheme.get();
-  const pressedColor = colorMode === 'dark' ? '#00FF00' : '#1a237e';
-  const defaultColor = colorMode === 'dark' ? '#2b3035' : '#ffffff';
+  const pressedColor = '#00FF00';
+
+  // Get color information from html tag...
+  const controller_color = [...document.querySelectorAll("dt")]
+    .find(dt => dt.textContent.trim() === "Color")
+    ?.nextElementSibling
+    ?.textContent.trim();
+
+  const final_color = controller_color && ds5_colors[controller_color] ? controller_color : "White";
 
   // Update L2/R2 analog infill
   for (const trigger of ['l2', 'r2']) {
@@ -755,9 +790,9 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
     if (changes.hasOwnProperty(key)) {
       const val = changes[key];
       const t = val / 255;
-      const color = lerp_color(defaultColor, pressedColor, t);
       const svg = trigger.toUpperCase() + '_infill';
       const infill = document.getElementById(svg);
+      const color = lerp_color(ds5_colors[final_color][svg], pressedColor, t);
       set_svg_group_color(infill, color);
 
       // Update percentage text
@@ -770,23 +805,33 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       }
     }
   }
-
-  // Update dpad buttons
-  for (const dir of ['up', 'right', 'down', 'left']) {
+  
+ for (const dir of ['up', 'right', 'down', 'left']) {
     if (changes.hasOwnProperty(dir)) {
       const pressed = changes[dir];
-      const group = document.getElementById(dir.charAt(0).toUpperCase() + dir.slice(1) + '_infill');
-      set_svg_group_color(group, pressed ? pressedColor : defaultColor);
+      const id = dir.charAt(0).toUpperCase() + dir.slice(1) + '_infill';
+      const group = document.getElementById(id);
+      set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
     }
   }
 
-  // Update other buttons
   for (const btn of BUTTON_MAP) {
-    if (['up', 'right', 'down', 'left'].includes(btn.name)) continue; // Dpad handled above
+    if (['up', 'right', 'down', 'left'].includes(btn.name)) continue;
     if (changes.hasOwnProperty(btn.name) && btn.svg) {
       const pressed = changes[btn.name];
-      const group = document.getElementById(btn.svg + '_infill');
-      set_svg_group_color(group, pressed ? pressedColor : defaultColor);
+      const id = btn.name.charAt(0).toUpperCase() + btn.name.slice(1) + '_infill';
+      const group = document.getElementById(id);
+      console.log({
+        "pressed": pressed,
+        "button": btn.name,
+        "color": pressed ? pressedColor : ds5_colors[final_color][id],
+        "pressedColor": pressedColor,
+        "ds5_color": ds5_colors[final_color][id],
+        "controller_color": final_color,
+        "id": id,
+        "group": group
+      })
+      set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
     }
   }
 }
@@ -891,6 +936,7 @@ function handleControllerInput({ changes, inputConfig, touchPoints, batteryStatu
 
   // Open Quick Test modal if options button is pressed while L1 is held down
   if (changes.options && controller.button_states.l1) {
+
     update_ds_button_svg({ l1: false }, buttonMap); // Clear L1
     show_quick_test_modal(controller);
     return;
