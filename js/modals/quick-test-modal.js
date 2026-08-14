@@ -536,7 +536,7 @@ export class QuickTestModal {
     if (model === 'DS4') {
       svgFileName = 'dualshock-controller.svg';
     } else if (model === 'DS5' || model === 'DS5_Edge') {
-      svgFileName = 'dualsense-controller.svg';
+      svgFileName = 'dualsense-controller-qt.svg';
     } else {
       throw new Error(`Unknown controller model: ${model}`);
     }

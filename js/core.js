@@ -153,7 +153,6 @@ async function connect() {
   app.gj = crypto.randomUUID();
   initAnalyticsApi(app); // init with gu and jg
 
-
   // Initialize controller manager with translation function
   controller = initControllerManager({ handleNvStatusUpdate });
   controller.setInputHandler(handleControllerInput);
@@ -245,8 +244,6 @@ async function continue_connection({data, device}) {
 
       info = await controllerInstance.getInfo();
 
-      Storage.setString('controller-color', info.infoItems['Color']);
-
       // Initialize output state for DS5 controllers
       if (controllerInstance.initializeCurrentOutputState) {
         await controllerInstance.initializeCurrentOutputState();
@@ -319,7 +316,7 @@ async function continue_connection({data, device}) {
 
     Storage.lastConnectedController.set(lastConnectedInfo);
     updateLastConnectedInfo();
-    
+
     // Initialize SVG controller based on model
     await init_svg_controller(model);
 
@@ -516,13 +513,12 @@ function welcome_accepted() {
 async function init_svg_controller(model) {
   const svgContainer = document.getElementById('controller-svg-placeholder');
   const colorMode = Storage.preferredTheme.get();
-
   // Determine which SVG to load based on controller model
   let svgFileName;
   if (model === 'DS4') {
     svgFileName = 'dualshock-controller.svg';
   } else if (model === 'DS5' || model === 'DS5_Edge') {
-    svgFileName = 'dualsense-controller.svg';
+    svgFileName = 'dualsense-controller-custom.svg';
   } else if (model === 'VR2') {
     // Disable SVG controller for VR2
     svgContainer.innerHTML = '';
@@ -555,16 +551,6 @@ async function init_svg_controller(model) {
   
   const dualshock = document.getElementById('Controller');
   set_svg_group_color(dualshock, lightBlue);
-
-  // Get controller info
-  const { infoItems } = await controller.getDeviceInfo();
-  // Controller color
-  const controller_color = infoItems?.find(item => item.key === l("Color"));
-  // If there is a color and color exist in ds5_colors then use that
-  // one. Else default to white.
-  const color = controller_color && dualsense_colors[controller_color.value]
-      ? controller_color.value
-      : "White";
 
   ['Button_outlines', 'Button_outlines_behind', 'L3_outline', 'R3_outline', 'Trackpad_outline'].forEach(id => {
     const group = document.getElementById(id);
@@ -931,7 +917,6 @@ function handleControllerInput({ changes, inputConfig, touchPoints, batteryStatu
 
   // Open Quick Test modal if options button is pressed while L1 is held down
   if (changes.options && controller.button_states.l1) {
-
     update_ds_button_svg({ l1: false }, buttonMap); // Clear L1
     show_quick_test_modal(controller);
     return;
