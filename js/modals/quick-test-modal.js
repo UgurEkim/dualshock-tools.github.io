@@ -2,7 +2,8 @@
 
 import { l } from '../translations.js';
 import { la } from '../utils.js';
-import { Storage } from '../storage.js';
+import { Storage } from '../storage.js'
+import { ds5_colors } from '../controllers/ds5-colors.js';
 
 const TEST_SEQUENCE = ['usb', 'buttons', 'adaptive', 'haptic', 'lights', 'speaker', 'headphone', 'microphone'];
 const TEST_NAMES = {
@@ -16,7 +17,7 @@ const TEST_NAMES = {
   'microphone': 'Microphone',
 };
 
-const BUTTONS = ['triangle', 'cross', 'circle', 'square', 'l1', 'r1', 'l2', 'r2', 'l3', 'r3', 'up', 'down', 'left', 'right', 'create', 'touchpad', 'options', 'ps', 'mute'];
+const BUTTONS = ['triangle', 'cross', 'circle', 'square', 'l1', 'r1', 'l2', 'r2', 'l3', 'r3', 'up', 'down', 'left', 'right', 'create', 'trackpad', 'options', 'ps', 'mute'];
 const BUTTON_INFILL_MAPPING = {
   'triangle': 'qt-Triangle_infill',
   'cross': 'qt-Cross_infill',
@@ -33,7 +34,7 @@ const BUTTON_INFILL_MAPPING = {
   'left': 'qt-Left_infill',
   'right': 'qt-Right_infill',
   'create': 'qt-Create_infill',
-  'touchpad': 'qt-Trackpad_infill',
+  'trackpad': 'qt-Trackpad_infill',
   'options': 'qt-Options_infill',
   'ps': 'qt-PS_infill',
   'mute': 'qt-Mute_infill'
@@ -535,7 +536,7 @@ export class QuickTestModal {
     if (model === 'DS4') {
       svgFileName = 'dualshock-controller.svg';
     } else if (model === 'DS5' || model === 'DS5_Edge') {
-      svgFileName = 'dualsense-controller.svg';
+      svgFileName = 'dualsense-controller-qt.svg';
     } else {
       throw new Error(`Unknown controller model: ${model}`);
     }
@@ -572,6 +573,7 @@ export class QuickTestModal {
 
     const lightBlue = '#7ecbff';
     const midBlue = '#3399cc';
+
     const dualshock = this._getQuickTestElement('qt-Controller');
     this._setSvgGroupColor(dualshock, lightBlue);
 
