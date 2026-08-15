@@ -552,6 +552,16 @@ async function init_svg_controller(model) {
   const dualshock = document.getElementById('Controller');
   set_svg_group_color(dualshock, lightBlue);
 
+  // Get controller info
+  const { infoItems } = await controller.getDeviceInfo();
+  // Controller color
+  const controller_color = infoItems?.find(item => item.key === l("Color"));
+  // If there is a color and color exist in ds5_colors then use that
+  // one. Else default to white.
+  const color = controller_color && dualsense_colors[controller_color.value]
+      ? controller_color.value
+      : "White";
+
   ['Button_outlines', 'Button_outlines_behind', 'L3_outline', 'R3_outline', 'Trackpad_outline'].forEach(id => {
     const group = document.getElementById(id);
     set_svg_group_color(group, midBlue);

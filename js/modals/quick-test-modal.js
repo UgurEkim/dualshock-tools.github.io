@@ -4,6 +4,7 @@ import { l } from '../translations.js';
 import { la } from '../utils.js';
 import { Storage } from '../storage.js'
 import { dualsense_colors } from '../controllers/controller-colors.js';
+import { dualsense_colors } from '../controllers/controller-colors.js';
 
 const TEST_SEQUENCE = ['usb', 'buttons', 'adaptive', 'haptic', 'lights', 'speaker', 'headphone', 'microphone'];
 const TEST_NAMES = {
@@ -592,9 +593,12 @@ export class QuickTestModal {
       this._setSvgGroupColor(group, midBlue);
     });
 
-    ['qt-Controller_infills', 'qt-Button_infills', 'qt-L3_infill', 'qt-R3_infill', 'qt-Trackpad_infill'].forEach(id => {
-      const group = document.getElementById(id);
-      this._setSvgGroupColor(group, 'white');
+    ['qt-Left_handle_infill',
+      'qt-Right_handle_infill',
+      'qt-Center_handle_infill'].forEach(id => {
+        const group = document.getElementById(id);
+        const key = id.slice(3);
+        this._setSvgGroupColor(group, dualsense_colors[color][key]);
     });
 
     this._resetButtonColors();
