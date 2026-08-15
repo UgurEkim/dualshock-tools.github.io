@@ -36,7 +36,7 @@ const BUTTON_INFILL_MAPPING = {
   'create': 'qt-Create_infill',
   'trackpad': 'qt-Trackpad_infill',
   'options': 'qt-Options_infill',
-  'ps': 'qt-Ps_infill',
+  'ps': 'qt-PS_infill',
   'mute': 'qt-Mute_infill'
 };
 
@@ -536,7 +536,7 @@ export class QuickTestModal {
     if (model === 'DS4') {
       svgFileName = 'dualshock-controller.svg';
     } else if (model === 'DS5' || model === 'DS5_Edge') {
-      svgFileName = 'dualsense-controller-qt.svg';
+      svgFileName = 'dualsense-controller.svg';
     } else {
       throw new Error(`Unknown controller model: ${model}`);
     }
@@ -592,12 +592,9 @@ export class QuickTestModal {
       this._setSvgGroupColor(group, midBlue);
     });
 
-    ['qt-Left_handle_infill',
-      'qt-Right_handle_infill',
-      'qt-Center_handle_infill'].forEach(id => {
-        const group = document.getElementById(id);
-        const key = id.slice(3);
-        this._setSvgGroupColor(group, dualsense_colors[color][key]);
+    ['qt-Controller_infills', 'qt-Button_infills', 'qt-L3_infill', 'qt-R3_infill', 'qt-Trackpad_infill'].forEach(id => {
+      const group = document.getElementById(id);
+      this._setSvgGroupColor(group, 'white');
     });
 
     this._resetButtonColors();

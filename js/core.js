@@ -518,7 +518,7 @@ async function init_svg_controller(model) {
   if (model === 'DS4') {
     svgFileName = 'dualshock-controller.svg';
   } else if (model === 'DS5' || model === 'DS5_Edge') {
-    svgFileName = 'dualsense-controller-custom.svg';
+    svgFileName = 'dualsense-controller.svg';
   } else if (model === 'VR2') {
     // Disable SVG controller for VR2
     svgContainer.innerHTML = '';
