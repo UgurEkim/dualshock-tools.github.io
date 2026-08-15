@@ -18,7 +18,7 @@ import {
 import { show_calibration_history_modal } from './modals/calibration-history-modal.js';
 import { FinetuneHistory } from './finetune-history.js';
 import * as theme from './theme.js'
-import { ds5_colors } from './controllers/ds5-colors.js';
+import { dualsense_colors } from './controllers/controller-colors.js';
 
 // Application State - manages app-wide state and UI
 const app = {
@@ -562,7 +562,7 @@ async function init_svg_controller(model) {
   const controller_color = infoItems?.find(item => item.key === l("Color"));
   // If there is a color and color exist in ds5_colors then use that
   // one. Else default to white.
-  const color = controller_color && ds5_colors[controller_color.value]
+  const color = controller_color && dualsense_colors[controller_color.value]
       ? controller_color.value
       : "White";
 
@@ -594,7 +594,7 @@ async function init_svg_controller(model) {
     'Center_handle_infill', 
     'Trackpad_infill'].forEach(id => {
     const group = document.getElementById(id);
-    set_svg_group_color(group, ds5_colors[color][id]);
+    set_svg_group_color(group, dualsense_colors[color][id]);
   });
 }
 
@@ -787,7 +787,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
     ?.nextElementSibling
     ?.textContent.trim();
 
-  const final_color = controller_color && ds5_colors[controller_color] ? controller_color : "White";
+  const final_color = controller_color && dualsense_colors[controller_color] ? controller_color : "White";
 
   // Update L2/R2 analog infill
   for (const trigger of ['l2', 'r2']) {
@@ -797,7 +797,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const t = val / 255;
       const svg = trigger.toUpperCase() + '_infill';
       const infill = document.getElementById(svg);
-      const color = lerp_color(ds5_colors[final_color][svg], pressedColor, t);
+      const color = lerp_color(dualsense_colors[final_color][svg], pressedColor, t);
       set_svg_group_color(infill, color);
 
       // Update percentage text
@@ -816,7 +816,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const pressed = changes[dir];
       const id = dir.charAt(0).toUpperCase() + dir.slice(1) + '_infill';
       const group = document.getElementById(id);
-      set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
+      set_svg_group_color(group, pressed ? pressedColor : dualsense_colors[final_color][id]);
     }
   }
 
@@ -826,7 +826,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const pressed = changes[btn.name];
       const id = btn.name.charAt(0).toUpperCase() + btn.name.slice(1) + '_infill';
       const group = document.getElementById(id);
-      set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
+      set_svg_group_color(group, pressed ? pressedColor : dualsense_colors[final_color][id]);
     }
   }
 }

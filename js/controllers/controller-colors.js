@@ -1,4 +1,4 @@
-export const ds5_colors = {
+export const dualsense_colors = {
     "Starlight Blue": {
         "Left_handle_infill": "#53bef4",
         "Right_handle_infill": "#53bef4",
