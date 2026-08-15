@@ -516,18 +516,13 @@ function welcome_accepted() {
 async function init_svg_controller(model) {
   const svgContainer = document.getElementById('controller-svg-placeholder');
   const colorMode = Storage.preferredTheme.get();
-  const { infoItems } = await controller.getDeviceInfo();
-  const controller_color = infoItems?.find(item => item.key === l("Color"));
-  const color = controller_color && ds5_colors[controller_color.value]
-      ? controller_color.value
-      : "White";
 
   // Determine which SVG to load based on controller model
   let svgFileName;
   if (model === 'DS4') {
     svgFileName = 'dualshock-controller.svg';
   } else if (model === 'DS5' || model === 'DS5_Edge') {
-    svgFileName = 'dualsense-controller-custom.svg';
+    svgFileName = 'dualsense-controller.svg';
   } else if (model === 'VR2') {
     // Disable SVG controller for VR2
     svgContainer.innerHTML = '';
@@ -561,12 +556,22 @@ async function init_svg_controller(model) {
   const dualshock = document.getElementById('Controller');
   set_svg_group_color(dualshock, lightBlue);
 
-  ['Button_outlines', 
-    'Button_outlines_behind', 
-    'L3_outline', 
-    'R3_outline', 
-    'Trackpad_outline', 
-    'Triangle_infill',
+  // Get controller info
+  const { infoItems } = await controller.getDeviceInfo();
+  // Controller color
+  const controller_color = infoItems?.find(item => item.key === l("Color"));
+  // If there is a color and color exist in ds5_colors then use that
+  // one. Else default to white.
+  const color = controller_color && ds5_colors[controller_color.value]
+      ? controller_color.value
+      : "White";
+
+  ['Button_outlines', 'Button_outlines_behind', 'L3_outline', 'R3_outline', 'Trackpad_outline'].forEach(id => {
+    const group = document.getElementById(id);
+    set_svg_group_color(group, midBlue);
+  });
+
+  ['Triangle_infill',
     'Cross_infill',
     'Circle_infill',
     'Square_infill',
@@ -821,16 +826,6 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const pressed = changes[btn.name];
       const id = btn.name.charAt(0).toUpperCase() + btn.name.slice(1) + '_infill';
       const group = document.getElementById(id);
-      console.log({
-        "pressed": pressed,
-        "button": btn.name,
-        "color": pressed ? pressedColor : ds5_colors[final_color][id],
-        "pressedColor": pressedColor,
-        "ds5_color": ds5_colors[final_color][id],
-        "controller_color": final_color,
-        "id": id,
-        "group": group
-      })
       set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
     }
   }
