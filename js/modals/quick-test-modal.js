@@ -3,7 +3,7 @@
 import { l } from '../translations.js';
 import { la } from '../utils.js';
 import { Storage } from '../storage.js'
-import { ds5_colors } from '../controllers/ds5-colors.js';
+import { dualsense_colors } from '../controllers/controller-colors.js';
 
 const TEST_SEQUENCE = ['usb', 'buttons', 'adaptive', 'haptic', 'lights', 'speaker', 'headphone', 'microphone'];
 const TEST_NAMES = {
@@ -580,7 +580,7 @@ export class QuickTestModal {
     const controller_color = infoItems?.find(item => item.key === l("Color"));
     // If there is a color and color exist in ds5_colors then use that
     // one. Else default to white.
-    const color = controller_color && ds5_colors[controller_color.value]
+    const color = controller_color && dualsense_colors[controller_color.value]
         ? controller_color.value
         : "White";
 
@@ -597,7 +597,7 @@ export class QuickTestModal {
       'qt-Center_handle_infill'].forEach(id => {
         const group = document.getElementById(id);
         const key = id.slice(3);
-        this._setSvgGroupColor(group, ds5_colors[color][key]);
+        this._setSvgGroupColor(group, dualsense_colors[color][key]);
     });
 
     this._resetButtonColors();
