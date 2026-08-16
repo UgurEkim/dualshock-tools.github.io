@@ -550,6 +550,8 @@ async function init_svg_controller(model) {
   // Reset trackpad bounding box so it's recalculated for the new SVG
   trackpadBbox = undefined;
 
+  const infillColors = colorMode === 'dark' ? '#2b3035' : '#ffffff';
+
   const lightBlue = '#7ecbff';
   const midBlue = '#3399cc';
   
