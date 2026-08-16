@@ -19,7 +19,6 @@ import { Storage } from './storage.js';
       colorMode.checked = true;
     }
     Storage.preferredTheme.set('dark');
-    switchSvgColors();
   }
 
   /**
@@ -33,7 +32,6 @@ import { Storage } from './storage.js';
       colorMode.checked = false;
     }
     Storage.preferredTheme.set('light');
-    switchSvgColors();
   }
 
   /**
