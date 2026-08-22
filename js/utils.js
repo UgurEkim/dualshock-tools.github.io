@@ -144,3 +144,49 @@ export function formatLocalizedDate(timestamp) {
   const locale = getLocaleForDateFormatting();
   return new Date(timestamp).toLocaleString(locale);
 }
+
+/**
+ * Extract DS5/DS5 Edge controller color by serial number
+ * @param {string} serialNumber controller serial number
+ * @returns {string} Controller color name
+ */
+
+export function convert_ds5_sn_to_color(serialNumber) {
+  // Color is obtained by the 5th and 6th characters of the serial number
+  // e.g. A12305xxx0000000 -> '05' -> Starlight Blue
+  if (serialNumber == undefined) return 'Unknown';
+  const colorMap = {
+    '00': 'White',
+    '01': 'Midnight Black',
+    '02': 'Cosmic Red',
+    '03': 'Nova Pink',
+    '04': 'Galactic Purple',
+    '05': 'Starlight Blue',
+    '06': 'Grey Camouflage',
+    '07': 'Volcanic Red',
+    '08': 'Sterling Silver',
+    '09': 'Cobalt Blue',
+    '10': 'Chroma Teal',
+    '11': 'Chroma Indigo',
+    '12': 'Chroma Pearl',
+    '13': 'HyperPop Techno Red',
+    '14': 'HyperPop Remix Green',
+    '15': 'HyperPop Rhythm Blue',
+    '30': '30th Anniversary',
+    'Z1': 'God of War Ragnarok',
+    'Z2': 'Spider-Man 2',
+    'Z3': 'Astro Bot',
+    'Z4': 'Fortnite',
+    'Z6': 'The Last of Us',
+    'ZA': 'God of War 20th Anniversary',
+    'ZB': 'Icon Blue Limited Edition',
+    'ZC': 'Ghost of Yōtei Limited Edition',
+    'ZD': 'Marathon Limited Edition',
+    'ZE': 'Genshin Impact Limited Edition',
+    'ZF': '007 First Light Limited Edition',
+  };
+
+  const colorCode = serialNumber.slice(4, 6);
+  const colorName = colorMap[colorCode] || 'Unknown';
+  return colorName;
+}

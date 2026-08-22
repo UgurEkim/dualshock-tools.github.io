@@ -1,6 +1,6 @@
 'use strict';
 
-import { sleep, float_to_str, dec2hex, dec2hex32, lerp_color, initAnalyticsApi, la } from './utils.js';
+import { sleep, float_to_str, dec2hex, dec2hex32, lerp_color, initAnalyticsApi, la, convert_ds5_sn_to_color } from './utils.js';
 import { Storage } from './storage.js';
 import { initControllerManager } from './controller-manager.js';
 import ControllerFactory from './controllers/controller-factory.js';
@@ -243,8 +243,7 @@ async function continue_connection({data, device}) {
       controller.setControllerInstance(controllerInstance);
 
       info = await controllerInstance.getInfo();
-
-      Storage.setString('controller-color', info.infoItems['Color']);
+      Storage.setObject("controller-info", info);
 
       // Initialize output state for DS5 controllers
       if (controllerInstance.initializeCurrentOutputState) {
@@ -517,7 +516,6 @@ function welcome_accepted() {
 
 async function init_svg_controller(model) {
   const svgContainer = document.getElementById('controller-svg-placeholder');
-  const colorMode = Storage.preferredTheme.get();
   // Determine which SVG to load based on controller model
   const svgFileName = (() => {
     switch(model) {
@@ -561,23 +559,24 @@ async function init_svg_controller(model) {
   // Reset trackpad bounding box so it's recalculated for the new SVG
   trackpadBbox = undefined;
 
-  const infillColors = colorMode === 'dark' ? '#2b3035' : '#ffffff';
-
   const lightBlue = '#7ecbff';
   const midBlue = '#3399cc';
   
   const dualshock = document.getElementById('Controller');
   set_svg_group_color(dualshock, lightBlue);
 
-  // Get controller info
-  const { infoItems } = await controller.getDeviceInfo();
-  // Controller color
-  const controller_color = infoItems?.find(item => item.key === l("Color"));
-  // If there is a color and color exist in ds5_colors then use that
-  // one. Else default to white.
-  const color = controller_color && dualsense_colors[controller_color.value]
-      ? controller_color.value
+  const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
+  const colorCode = convert_ds5_sn_to_color(serialNumber)
+  const color = colorCode != 'Unknown' && dualsense_colors[colorCode]
+      ? colorCode
       : "White";
+    
+  console.log({
+    "0": serialNumber,
+    "1": colorCode,
+    "2": color,
+    "3": dualsense_colors[colorCode]
+  });
 
   ['Button_outlines', 'Button_outlines_behind', 'L3_outline', 'R3_outline', 'Trackpad_outline'].forEach(id => {
     const group = document.getElementById(id);
@@ -789,15 +788,12 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
   if (!changes || Object.keys(changes).length === 0) return;
 
   const pressedColor = '#00FF00';
-
-  // Get color information from html tag...
-  const controller_color = [...document.querySelectorAll("dt")]
-    .find(dt => dt.textContent.trim() === "Color")
-    ?.nextElementSibling
-    ?.textContent.trim();
-
-  const final_color = controller_color && dualsense_colors[controller_color] ? controller_color : "White";
-
+  const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
+  const colorCode = convert_ds5_sn_to_color(serialNumber)
+  const final_color = colorCode != 'Unknown' && dualsense_colors[colorCode]
+      ? colorCode
+      : "White";
+    
   // Update L2/R2 analog infill
   for (const trigger of ['l2', 'r2']) {
     const key = trigger + '_analog';

@@ -10,6 +10,7 @@ import {
   format_mac_from_view, 
   reverse_str, 
   la,
+  convert_ds5_sn_to_color,
 } from '../utils.js';
 import { l } from '../translations.js';
 
@@ -193,45 +194,6 @@ class DS5OutputStruct {
   }
 }
 
-function ds5_color(serialNumber) {
-  // Color is obtained by the 5th and 6th characters of the serial number
-  // e.g. A12305xxx0000000 -> '05' -> Starlight Blue
-  const colorMap = {
-    '00': 'White',
-    '01': 'Midnight Black',
-    '02': 'Cosmic Red',
-    '03': 'Nova Pink',
-    '04': 'Galactic Purple',
-    '05': 'Starlight Blue',
-    '06': 'Grey Camouflage',
-    '07': 'Volcanic Red',
-    '08': 'Sterling Silver',
-    '09': 'Cobalt Blue',
-    '10': 'Chroma Teal',
-    '11': 'Chroma Indigo',
-    '12': 'Chroma Pearl',
-    '13': 'HyperPop Techno Red',
-    '14': 'HyperPop Remix Green',
-    '15': 'HyperPop Rhythm Blue',
-    '30': '30th Anniversary',
-    'Z1': 'God of War Ragnarok',
-    'Z2': 'Spider-Man 2',
-    'Z3': 'Astro Bot',
-    'Z4': 'Fortnite',
-    'Z6': 'The Last of Us',
-    'ZA': 'God of War 20th Anniversary',
-    'ZB': 'Icon Blue Limited Edition',
-    'ZC': 'Ghost of Yōtei Limited Edition',
-    'ZD': 'Marathon Limited Edition',
-    'ZE': 'Genshin Impact Limited Edition',
-    'ZF': '007 First Light Limited Edition',
-  };
-
-  const colorCode = serialNumber.slice(4, 6);
-  const colorName = colorMap[colorCode] || 'Unknown';
-  return colorName;
-}
-
 /**
 * DualSense (DS5) Controller implementation
 */
@@ -311,7 +273,7 @@ class DS5Controller extends BaseController {
       const fwversion3 = view.getUint32(56, true);
 
       const serial_number = await this.getSystemInfo(1, 19, 17);
-      const color = ds5_color(serial_number);
+      const color = convert_ds5_sn_to_color(serial_number);
       const infoItems = [
         { key: l("Serial Number"), value: serial_number, cat: "hw", copyable: true },
         { key: l("MCU Unique ID"), value: await this.getSystemInfo(1, 9, 9, false), cat: "hw", isExtra: true, copyable: true },
