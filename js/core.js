@@ -49,7 +49,6 @@ const app = {
 const ll_data = new Array(CIRCULARITY_DATA_SIZE);
 const rr_data = new Array(CIRCULARITY_DATA_SIZE);
 
-
 let controller = null;
 
 function gboot() {
@@ -153,6 +152,7 @@ async function connect() {
   app.gj = crypto.randomUUID();
   initAnalyticsApi(app); // init with gu and jg
 
+
   // Initialize controller manager with translation function
   controller = initControllerManager({ handleNvStatusUpdate });
   controller.setInputHandler(handleControllerInput);
@@ -244,6 +244,8 @@ async function continue_connection({data, device}) {
 
       info = await controllerInstance.getInfo();
 
+      Storage.setString('controller-color', info.infoItems['Color']);
+
       // Initialize output state for DS5 controllers
       if (controllerInstance.initializeCurrentOutputState) {
         await controllerInstance.initializeCurrentOutputState();
@@ -316,7 +318,7 @@ async function continue_connection({data, device}) {
 
     Storage.lastConnectedController.set(lastConnectedInfo);
     updateLastConnectedInfo();
-
+    
     // Initialize SVG controller based on model
     await init_svg_controller(model);
 
@@ -545,6 +547,8 @@ async function init_svg_controller(model) {
 
   // Reset trackpad bounding box so it's recalculated for the new SVG
   trackpadBbox = undefined;
+
+  const infillColors = colorMode === 'dark' ? '#2b3035' : '#ffffff';
 
   const lightBlue = '#7ecbff';
   const midBlue = '#3399cc';
@@ -927,6 +931,7 @@ function handleControllerInput({ changes, inputConfig, touchPoints, batteryStatu
 
   // Open Quick Test modal if options button is pressed while L1 is held down
   if (changes.options && controller.button_states.l1) {
+
     update_ds_button_svg({ l1: false }, buttonMap); // Clear L1
     show_quick_test_modal(controller);
     return;

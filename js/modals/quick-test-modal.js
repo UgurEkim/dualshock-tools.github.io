@@ -36,7 +36,7 @@ const BUTTON_INFILL_MAPPING = {
   'create': 'qt-Create_infill',
   'trackpad': 'qt-Trackpad_infill',
   'options': 'qt-Options_infill',
-  'ps': 'qt-PS_infill',
+  'ps': 'qt-Ps_infill',
   'mute': 'qt-Mute_infill'
 };
 
