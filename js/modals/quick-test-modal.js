@@ -4,7 +4,6 @@ import { l } from '../translations.js';
 import { la } from '../utils.js';
 import { Storage } from '../storage.js'
 import { dualsense_colors } from '../controllers/controller-colors.js';
-import { dualsense_colors } from '../controllers/controller-colors.js';
 
 const TEST_SEQUENCE = ['usb', 'buttons', 'adaptive', 'haptic', 'lights', 'speaker', 'headphone', 'microphone'];
 const TEST_NAMES = {
