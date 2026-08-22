@@ -1,9 +1,9 @@
 'use strict';
 
 import { l } from '../translations.js';
-import { la } from '../utils.js';
+import { la, convert_ds5_sn_to_color } from '../utils.js';
 import { Storage } from '../storage.js'
-import { dualsense_colors } from '../controllers/controller-colors.js';
+import { ds5_colors } from '../controllers/controller-colors.js';
 
 const TEST_SEQUENCE = ['usb', 'buttons', 'adaptive', 'haptic', 'lights', 'speaker', 'headphone', 'microphone'];
 const TEST_NAMES = {
@@ -574,14 +574,10 @@ export class QuickTestModal {
     const lightBlue = '#7ecbff';
     const midBlue = '#3399cc';
 
-    // Get controller info
-    const { infoItems } = await this.controller.getDeviceInfo();
-    // Controller color
-    const controller_color = infoItems?.find(item => item.key === l("Color"));
-    // If there is a color and color exist in ds5_colors then use that
-    // one. Else default to white.
-    const color = controller_color && dualsense_colors[controller_color.value]
-        ? controller_color.value
+    const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
+    const colorCode = convert_ds5_sn_to_color(serialNumber)
+    const color = colorCode != 'Unknown' && ds5_colors[colorCode]
+        ? colorCode
         : "White";
 
     const dualshock = this._getQuickTestElement('qt-Controller');
@@ -597,7 +593,7 @@ export class QuickTestModal {
       'qt-Center_handle_infill'].forEach(id => {
         const group = document.getElementById(id);
         const key = id.slice(3);
-        this._setSvgGroupColor(group, dualsense_colors[color][key]);
+        this._setSvgGroupColor(group, ds5_colors[color][key]);
     });
 
     this._resetButtonColors();
@@ -773,7 +769,7 @@ export class QuickTestModal {
     const buttonElement = this._getQuickTestElement(BUTTON_INFILL_MAPPING[button]);
 
     if (buttonElement) {
-      const checkOnce = ['create', 'touchpad', 'options', 'l3', 'ps', 'mute', 'r3'].includes(button);
+      const checkOnce = ['create', 'trackpad', 'options', 'l3', 'ps', 'mute', 'r3'].includes(button);
       const colors = checkOnce ? ['orange'] : ['orange', '#a5c9fcff', '#287ffaff'];
       const color = colors[count] || '#16c016ff';
       this._setSvgGroupColor(buttonElement, color);

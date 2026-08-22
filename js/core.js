@@ -18,7 +18,7 @@ import {
 import { show_calibration_history_modal } from './modals/calibration-history-modal.js';
 import { FinetuneHistory } from './finetune-history.js';
 import * as theme from './theme.js'
-import { dualsense_colors } from './controllers/controller-colors.js';
+import { ds5_colors } from './controllers/controller-colors.js';
 
 // Application State - manages app-wide state and UI
 const app = {
@@ -567,16 +567,9 @@ async function init_svg_controller(model) {
 
   const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
   const colorCode = convert_ds5_sn_to_color(serialNumber)
-  const color = colorCode != 'Unknown' && dualsense_colors[colorCode]
+  const color = colorCode != 'Unknown' && ds5_colors[colorCode]
       ? colorCode
       : "White";
-    
-  console.log({
-    "0": serialNumber,
-    "1": colorCode,
-    "2": color,
-    "3": dualsense_colors[colorCode]
-  });
 
   ['Button_outlines', 'Button_outlines_behind', 'L3_outline', 'R3_outline', 'Trackpad_outline'].forEach(id => {
     const group = document.getElementById(id);
@@ -607,7 +600,7 @@ async function init_svg_controller(model) {
     'Trackpad_infill',
     'Button_infills_behind'].forEach(id => {
     const group = document.getElementById(id);
-    set_svg_group_color(group, dualsense_colors[color][id]);
+    set_svg_group_color(group, ds5_colors[color][id]);
   });
 }
 
@@ -790,7 +783,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
   const pressedColor = '#00FF00';
   const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
   const colorCode = convert_ds5_sn_to_color(serialNumber)
-  const final_color = colorCode != 'Unknown' && dualsense_colors[colorCode]
+  const final_color = colorCode != 'Unknown' && ds5_colors[colorCode]
       ? colorCode
       : "White";
     
@@ -802,7 +795,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const t = val / 255;
       const svg = trigger.toUpperCase() + '_infill';
       const infill = document.getElementById(svg);
-      const color = lerp_color(dualsense_colors[final_color][svg], pressedColor, t);
+      const color = lerp_color(ds5_colors[final_color][svg], pressedColor, t);
       set_svg_group_color(infill, color);
 
       // Update percentage text
@@ -821,7 +814,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const pressed = changes[dir];
       const id = dir.charAt(0).toUpperCase() + dir.slice(1) + '_infill';
       const group = document.getElementById(id);
-      set_svg_group_color(group, pressed ? pressedColor : dualsense_colors[final_color][id]);
+      set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
     }
   }
 
@@ -831,7 +824,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       const pressed = changes[btn.name];
       const id = btn.name.charAt(0).toUpperCase() + btn.name.slice(1) + '_infill';
       const group = document.getElementById(id);
-      set_svg_group_color(group, pressed ? pressedColor : dualsense_colors[final_color][id]);
+      set_svg_group_color(group, pressed ? pressedColor : ds5_colors[final_color][id]);
     }
   }
 }
