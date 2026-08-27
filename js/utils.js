@@ -151,7 +151,7 @@ export function formatLocalizedDate(timestamp) {
  * @returns {string} Controller color name
  */
 
-export function convert_ds5_sn_to_color(serialNumber) {
+export function convertSerialNrToColorCode(serialNumber) {
   // Color is obtained by the 5th and 6th characters of the serial number
   // e.g. A12305xxx0000000 -> '05' -> Starlight Blue
   if (serialNumber == undefined) return 'Unknown';

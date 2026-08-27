@@ -10,7 +10,7 @@ import {
   format_mac_from_view, 
   reverse_str, 
   la,
-  convert_ds5_sn_to_color,
+  convertSerialNrToColorCode,
 } from '../utils.js';
 import { l } from '../translations.js';
 
@@ -274,7 +274,7 @@ class DS5Controller extends BaseController {
       const fwversion3 = view.getUint32(56, true);
 
       const serial_number = await this.getSystemInfo(1, 19, 17);
-      const color = convert_ds5_sn_to_color(serial_number);
+      const color = convertSerialNrToColorCode(serial_number);
       const infoItems = [
         { key: l("Serial Number"), value: serial_number, cat: "hw", copyable: true },
         { key: l("MCU Unique ID"), value: await this.getSystemInfo(1, 9, 9, false), cat: "hw", isExtra: true, copyable: true },

@@ -1,7 +1,7 @@
 'use strict';
 
 import { l } from '../translations.js';
-import { la, convert_ds5_sn_to_color } from '../utils.js';
+import { la, convertSerialNrToColorCode } from '../utils.js';
 import { Storage } from '../storage.js'
 import { ds5_colors } from '../controllers/controller-colors.js';
 
@@ -713,8 +713,8 @@ export class QuickTestModal {
     const midBlue = '#3399cc';
 
     const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
-    const colorCode = convert_ds5_sn_to_color(serialNumber)
-    const color = colorCode != 'Unknown' && ds5_colors[colorCode]
+    const colorCode = convertSerialNrToColorCode(serialNumber)
+    const color = colorCode != 'Unknown' && Object.hasOwn(ds5_colors, colorCode)
         ? colorCode
         : "White";
 

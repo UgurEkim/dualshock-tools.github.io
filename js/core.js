@@ -1,6 +1,6 @@
 'use strict';
 
-import { sleep, float_to_str, dec2hex, dec2hex32, lerp_color, initAnalyticsApi, la, convert_ds5_sn_to_color } from './utils.js';
+import { sleep, float_to_str, dec2hex, dec2hex32, lerp_color, initAnalyticsApi, la, convertSerialNrToColorCode } from './utils.js';
 import { Storage } from './storage.js';
 import { initControllerManager } from './controller-manager.js';
 import ControllerFactory from './controllers/controller-factory.js';
@@ -566,8 +566,8 @@ async function init_svg_controller(model) {
   set_svg_group_color(dualshock, lightBlue);
 
   const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
-  const colorCode = convert_ds5_sn_to_color(serialNumber)
-  const color = colorCode != 'Unknown' && ds5_colors[colorCode]
+  const colorCode = convertSerialNrToColorCode(serialNumber)
+  const color = colorCode != 'Unknown' && Object.hasOwn(ds5_colors, colorCode)
       ? colorCode
       : "White";
 
@@ -782,7 +782,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
 
   const pressedColor = '#00FF00';
   const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
-  const colorCode = convert_ds5_sn_to_color(serialNumber)
+  const colorCode = convertSerialNrToColorCode(serialNumber)
   const final_color = colorCode != 'Unknown' && ds5_colors[colorCode]
       ? colorCode
       : "White";
