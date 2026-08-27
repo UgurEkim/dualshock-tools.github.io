@@ -152,7 +152,6 @@ async function connect() {
   app.gj = crypto.randomUUID();
   initAnalyticsApi(app); // init with gu and jg
 
-
   // Initialize controller manager with translation function
   controller = initControllerManager({ handleNvStatusUpdate });
   controller.setInputHandler(handleControllerInput);
@@ -317,7 +316,6 @@ async function continue_connection({data, device}) {
 
     Storage.lastConnectedController.set(lastConnectedInfo);
     updateLastConnectedInfo();
-    
     // Initialize SVG controller based on model
     await init_svg_controller(model);
     if (model === "DS5_Edge") {
@@ -808,8 +806,9 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
       }
     }
   }
-  
- for (const dir of ['up', 'right', 'down', 'left']) {
+
+  // Update dpad buttons
+  for (const dir of ['up', 'right', 'down', 'left']) {
     if (changes.hasOwnProperty(dir)) {
       const pressed = changes[dir];
       const id = dir.charAt(0).toUpperCase() + dir.slice(1) + '_infill';
@@ -818,6 +817,7 @@ function update_ds_button_svg(changes, BUTTON_MAP) {
     }
   }
 
+  // Update other buttons
   for (const btn of BUTTON_MAP) {
     if (['up', 'right', 'down', 'left'].includes(btn.name)) continue;
     if (changes.hasOwnProperty(btn.name) && btn.svg) {
@@ -948,7 +948,6 @@ function handleControllerInput({ changes, inputConfig, touchPoints, batteryStatu
 
   // Open Quick Test modal if options button is pressed while L1 is held down
   if (changes.options && controller.button_states.l1) {
-
     update_ds_button_svg({ l1: false }, buttonMap); // Clear L1
     show_quick_test_modal(controller);
     return;
