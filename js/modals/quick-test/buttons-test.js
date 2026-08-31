@@ -1,6 +1,9 @@
 'use strict';
 
+import { ds5_colors } from '../../controllers/controller-colors.js';
+import { Storage } from '../../storage.js';
 import { l } from '../../translations.js';
+import { convertSerialNrToColorCode } from '../../utils.js';
 import { addIcons } from './utils.js';
 
 const BUTTONS = ['triangle', 'cross', 'circle', 'square', 'l1', 'r1', 'l2', 'r2', 'l3', 'r3', 'up', 'down', 'left', 'right', 'create', 'touchpad', 'options', 'ps', 'mute'];
@@ -22,7 +25,7 @@ const BUTTON_INFILL_MAPPING = {
   'create': 'qt-Create_infill',
   'touchpad': 'qt-Trackpad_infill',
   'options': 'qt-Options_infill',
-  'ps': 'qt-PS_infill',
+  'ps': 'qt-Ps_infill',
   'mute': 'qt-Mute_infill'
 };
 
@@ -141,14 +144,37 @@ export class ButtonsTest {
     const dualshock = this._getSvgElement('qt-Controller');
     this._setSvgGroupColor(dualshock, lightBlue);
 
+    const serialNumber = Storage.getObject("controller-info").infoItems[0].value;
+    const colorCode = convertSerialNrToColorCode(serialNumber)
+    const color = colorCode != 'Unknown' && Object.hasOwn(ds5_colors, colorCode)
+        ? colorCode
+        : "White";
+
+    console.log({
+      "serial": serialNumber,
+      "colorCode": colorCode,
+      "color": color,
+      "ds5_color": ds5_colors[color]
+    });
+
+
     ['qt-Button_outlines','qt-Button_outlines_behind', 'qt-L3_outline', 'qt-R3_outline', 'qt-Trackpad_outline'].forEach(id => {
       const group = this._getSvgElement(id);
       this._setSvgGroupColor(group, midBlue);
     });
 
-    ['qt-Controller_infills', 'qt-Button_infills', 'qt-L3_infill', 'qt-R3_infill', 'qt-Trackpad_infill'].forEach(id => {
+    ['qt-Left_handle_infill', 'qt-Right_handle_infill', 'qt-Center_handle_infill', 'qt-Controller_infills', 'qt-Button_infills', 'qt-L3_infill', 'qt-R3_infill', 'qt-Trackpad_infill'].forEach(id => {
       const group = document.getElementById(id);
-      this._setSvgGroupColor(group, 'white');
+      const key = id.slice(3);
+
+      console.log({
+        "serial": serialNumber,
+        "colorCode": colorCode,
+        "color": color,
+        "ds5_color": ds5_colors[color],
+        "key": key
+      });
+      this._setSvgGroupColor(group, ds5_colors[color][key]);
     });
 
     this._resetButtonColors();
